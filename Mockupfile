@@ -24,6 +24,6 @@ mockup.release do |r|
   r.cleanup "**/.sass-cache"
   r.cleanup "**/stylesheets/src"  
   
-  r.finalize GitBranch, :branch => "gh-pages"
+  r.finalize GitBranch, :branch => "gh-pages", :remote => "git@github.com:flurin/thalia-lunchlezing-20140226.git"
 end
 
