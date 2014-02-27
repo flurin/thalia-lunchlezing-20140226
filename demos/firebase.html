@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <script type='text/javascript' src='https://cdn.firebase.com/js/client/1.0.6/firebase.js'></script>
+    <script type='text/javascript'
+ src='https://cdn.firebase.com/js/simple-login/1.2.5/firebase-simple-login.js'>
+    </script>
+  </head>
+  <body>
+    <code><pre>
+    <!-- // <script> -->
+      var myRootRef = new Firebase('https://thaliademo.firebaseio.com');
+      myRootRef.set("hello world");
+      myRootRef.set({ "test" : "value" });
+      myRootRef.set([1,2,3,4]);
+      
+      var usersRef = myRootRef.child("users");
+      var fbUser = null;
+      var auth = new FirebaseSimpleLogin(usersRef, function(error, user) {
+        if(error){
+          this.error = error;
+          throw error;
+        } else if(user) {
+          console.log("Authenticated!");
+          // Normally you'd do stuff here.
+          fbUser = user;
+        } else {
+          // We have to get a new session here
+          this.auth.login("github");    
+        }
+      });
+      
+      var myUserRef = usersRef.child(fbUser.id);
+      myUserRef.set({ "e-mail" : "flurin@digitpaint.nl" });
+      
+      
+      usersRef.on("child_added", function(snapshot){
+        console.log(snapshot.name(), snapshot.val());
+      });
+      
+    <!-- </script> -->
+    </pre></code>
+  </body>
+</html>
