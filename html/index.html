@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Javascript &amp; Stuff the web can do  - Thalia Lunchlezing 26-02-2014</title>
+
+    <meta name="description" content="">
+    <meta name="author" content="Flurin Egger">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="vendor/revealjs/css/reveal.min.css">
+    <link rel="stylesheet" href="stylesheets/theme.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="vendor/revealjs/lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="vendor/revealjs/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="vendor/revealjs/lib/js/html5shiv.js"></script>
+    <![endif]-->
+      
+  </head>
+
+  <body>
+
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section data-background="images/backgrounds/title.png">
+          <img src="images/elephant.png" class="seamless">
+          <h1>Javascript &amp; Stuff the Web Can Do</h1>
+          <p>Thalia Lunchlezing, february 26th, 2014</p>
+        </section>
+        
+        <section data-background="images/backgrounds/flurin.jpg">
+          <h1>Hi, I am Flurin</h1>
+          <p>@flurin</p>
+        </section>
+        
+        
+        <section>
+          <a href="http://www.digitpaint.nl"><img src="images/logo_digitpaint.png" class="seamless"></a>
+        </section>
+
+        <section>
+          <h1>Javascript</h1>
+          <p>(and stuff the web can do)</p>
+        </section>
+        
+        <section>
+          <blockquote>
+            Any application that can be written in JavaScript, will eventually be written in JavaScript.
+            <cite><a href="http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html">Jeff Atwood, 2007</a></cite>
+          </blockquote>
+        </section>
+        
+        
+        <section>
+          <section>
+            <h1>Stuff the browser can do</h1>
+          </section>
+          
+          <section>
+            <h1>Media access</h1>
+            <video id="webcam_video" class="stretch" style="width: 500px; height: 500px"></video>
+            <div>
+              <button id="webcam_button_start">Start!</button>
+              <button id="webcam_button_stop">Stop!</button>              
+            </div>  
+            
+            <script>
+              navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.getUserMedia;
+              window.URL = window.webkitURL ||  window.URL;
+            
+              !function(){
+                var stream;
+                var buttonStart = document.getElementById("webcam_button_start");
+                var buttonStop = document.getElementById("webcam_button_stop");                
+                var video  = document.getElementById("webcam_video");
+                
+                var start = function(){
+                  navigator.getUserMedia(
+                    {
+                      video: true
+                    }, 
+                    function(s){
+                      stream = s
+                      video.src = window.URL.createObjectURL(s);
+                      video.autoplay = true;
+                    }, 
+                    // Failed
+                    function(e){
+                      console.log(e);
+                    }
+                  );  
+                }
+                
+                var stop = function(){
+                  stream.stop();
+                  stream = null;
+                }
+                
+                
+                buttonStart.addEventListener("click", start);
+                buttonStop.addEventListener("click", stop);                
+                
+              }()
+            
+            
+            </script>
+          </section>
+          
+          <section>
+            <pre><code data-trim>
+navigator.getUserMedia(
+  {
+    video: true
+  }, 
+  function(s){
+    stream = s
+    video.src = window.URL.createObjectURL(s);
+    video.autoplay = true;
+  }, 
+  // Failed
+  function(e){
+    console.log(e);
+  }
+);  
+            </code></pre>
+          </section>
+          
+          <section>
+            <h1>Screen sharing</h1>
+            <p>
+              <strong>Warning</strong>
+              This will only work in Chrome Canary.
+            </p>
+            <video id="screen_video" class="stretch"  style="width: 500px; height: 500px"></video>
+            <div>
+              <button id="screen_button_start">Start!</button>
+              <button id="screen_button_stop">Stop!</button>              
+            </div>
+            
+            <script>
+            !function(){
+              var stream;
+              var buttonStart = document.getElementById("screen_button_start");
+              var buttonStop = document.getElementById("screen_button_stop");              
+              var video = document.getElementById("screen_video");
+              
+              var start = function(){
+
+                navigator.getUserMedia({
+                  video: {
+                    mandatory: {
+                      chromeMediaSource: "screen"
+                    }
+                  }
+                }, 
+                // Yay, got the stream!
+                function(s){
+                  stream = s;
+                  video.src = window.URL.createObjectURL(stream);
+                  video.autoplay = true;
+                }, 
+                // Failed
+                function(e){
+                  console.log(e);
+                })              
+              }
+              
+              var stop = function(){
+                stream.stop();
+                stream = null;
+              }
+              
+              
+              buttonStart.addEventListener("click", start);
+              buttonStop.addEventListener("click", stop);  
+            }()
+            </script>
+                        
+          </section>
+          
+          <section>
+            <pre><code data-trim>
+navigator.getUserMedia(
+  {
+    video: {
+      mandatory: {
+        chromeMediaSource: "screen"
+      }      
+    }
+  }, 
+  function(s){
+    stream = s
+    video.src = window.URL.createObjectURL(s);
+    video.autoplay = true;
+  }, 
+  // Failed
+  function(e){
+    console.log(e);
+  }
+);  
+            </code></pre>
+          </section>  
+          
+          <section>
+            <h1>Let's gif it!</h1>
+            <a href="http://advent2012.digitpaint.nl/12/">Live in action</a>
+          </section>
+          
+          <section>
+            <h1>Atwood's law</h1>
+            <p>... from Java to ActionScript to JS</p>
+          </section>
+          
+        </section>
+        
+        <section>
+          <section>
+            <h1>Look ma, (almost) no backend...</h1>
+          </section>
+          
+          <section>
+            <h1>What more is a backend then a datastore?</h1>
+          </section>
+          
+          <section>
+            <h1>Clientside MVC</h1>
+            <ul>
+              <li class="fragment"><a href="http://backbonejs.org/">Backbone.js</a></li>
+              <li class="fragment"><a href="http://angularjs.org/">AngularJS</a></li>
+              <li class="fragment"><a href="http://emberjs.com/">Ember.js</a></li>              
+            </ul>
+          </section>
+          
+          <section>
+            <h1>Principles</h1>
+            <ul>
+              <li class="fragment">It's not like server-side MVC</li>
+              <li class="fragment">Event driven (bindings)</li>
+              <li class="fragment">View is just a reflection of your data</li>
+              <li class="fragment">Back-end is a datastore</li>              
+            </ul>
+          </section>
+          
+          <section>
+            <h1>Back-end as a service</h1>
+          </section>
+          
+          <section>
+            <video src="/videos/firebase.mov" style="width: 100%" controls=true>
+          </section>
+          
+        </section>
+        
+        <section>
+          <section>
+            <h1>Gaming</h1>
+          </section>
+                              
+          <section>
+            <h1>Some demo's</h1>
+            <ul>
+              <li><a href="http://bouncyballs.org/">Bouncy Balls</a></li>
+              <li><a href="https://vimeo.com/87127409">Save the date game</a>
+            </ul>
+          </section>
+          
+          
+          <section>
+            <h1>Libraries</h1>
+            <ul>
+              <li><a href="http://impactjs.com">ImpactJS</a></li>
+              <li><a href="http://www.pandajs.net/">Panda.js</a></li>              
+              <li><a href="http://phaser.io//">Phaser</a></li>                            
+            </ul>
+          </section>
+          
+          <section>
+            <h1>3D</h1>
+          </section>
+          
+          <section>
+            <h1>Demo's</h1>
+            <ul>
+              <li><a href="http://stephaneginier.com/sculptgl/">SculptGL</a></li>
+              <li><a href="http://dl.dropboxusercontent.com/u/6983010/wserv/gexp_pulpo/index.html">Pulpo</a></li>
+              <li><a href="http://www.mrdoob.com/lab/javascript/webgl/voxels_liquid/index.html">Voxels liquid</a></li>
+            </ul>
+          </section>
+          
+          <section>
+            <h1>QuakeJS</h1>
+            <a href="http://www.quakejs.com/">Demo</a>
+          </section>
+        </section>
+        
+        <section>
+          <section>
+            <h1>Cross-compiling</h1>
+            <p>Compile to javascript</p>
+          </section>
+          
+          <section>
+            <h1>Demo</h1>
+            <ul>
+              <li><a href="https://github.com/jashkenas/coffee-script/wiki/List-of-languages-that-compile-to-JS">List of languages that compile to JS</a></li>
+              <li><a href="http://manuels.github.io/hpdf.js/">hpdf.js</a></li>
+            </ul>
+          </section>
+        </section>
+        
+        
+        
+        <section>
+          <section>
+            <h1>Offline</h1>
+          </section>
+          
+          <section>
+            <h1>Tessel</h1>
+            <img src="/images/logo_tessel.png" class="seamless">
+            <a href="https://tessel.io/">https://tessel.io/</a>
+          </section>
+          
+          
+          <section>
+            <h1>Parrot AR Drone</h1>
+          </section>
+          
+          <section>
+            <h1>DEMO</h1>
+          </section>
+          
+          <section>
+            <h1>Demo code</h1>
+            <pre><code data-trim>
+var arDrone = require('ar-drone');
+var client = arDrone.createClient({ip: "192.168.1.1"});
+
+process.on( 'SIGINT', function() {
+  console.log("STOP!");
+  client.stop();
+  client.land();
+  process.exit( );
+})
+
+client.takeoff();
+
+client.after(5000, function(){
+  this.up(0.5);
+}).after(2000, function(){
+  this.right(0.5);
+}).after(3000, function(){
+  this.stop();
+  this.land();  
+})
+            </code></pre>
+          </section>
+          
+          <section>
+            <iframe width="853" height="480" src="//www.youtube.com/embed/3oWdOhVAHgM?rel=0" frameborder="0" allowfullscreen></iframe>
+          </section>
+        </section>
+        
+        <section>
+          <h1>There is so much more...</h1>
+          <p>... Javascript is the future</p>
+        </section>
+        
+        <section>
+          <h1>We're hiring</h1>
+          <a href="mailto:flurin@digitpaint.nl">Get in touch</a>
+        </section>
+        
+        <section data-state="slide-thankyou" data-background="images/backgrounds/thank_you.png">
+          <h1>Thank you</h1>
+        </section>
+      </div>
+    </div>
+
+    <script src="vendor/revealjs/lib/js/head.min.js"></script>
+    <script src="vendor/revealjs/js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'vendor/revealjs/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'vendor/revealjs/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'vendor/revealjs/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'vendor/revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'vendor/revealjs/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'vendor/revealjs/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
